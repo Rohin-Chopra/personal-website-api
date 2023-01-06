@@ -26,7 +26,7 @@ class ContactHandler {
     name: string,
     email: string,
     message: string
-  ) {
+  ): Promise<void> {
     const log = logger.child({ module: "sendEmailToMyself" });
     log.info("start");
 
@@ -52,7 +52,7 @@ class ContactHandler {
     log.info("end");
   }
 
-  private async sendEmailToUser(name: string, email: string) {
+  private async sendEmailToUser(name: string, email: string): Promise<void> {
     const log = logger.child({ module: "sendEmailToUser" });
     log.info("start");
 
