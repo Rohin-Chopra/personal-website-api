@@ -1,0 +1,100 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  personal-website-api
+
+Transform:
+  - AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Layers:
+      - !Ref RuntimeDependenciesLayer
+    Runtime: nodejs16.x
+    MemorySize: 128
+    Timeout: 100
+
+Resources:
+  PersonalWebsiteApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Auth:
+        ApiKeyRequired: true
+
+  ContactFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: dist/handlers/index.contactHandler
+      Description: A lambda function for handling contact queries on rohin's personal website.
+      Environment:
+        Variables:
+          NO_REPLY_EMAIL: no-reply@rohinchopra.com
+          ADMIN_EMAIL: rohin@rohinchopra.com
+          REPLY_EMAIL_TEMPLATE: contact-reply-email-template
+          NOTIFY_EMAIL_TEMPLATE_NAME: contact-notify-email-template
+      Events:
+        ApiKey:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PersonalWebsiteApi
+            Path: /contact
+            Method: POST
+            Auth:
+              ApiKeyRequired: true
+
+  # Shared layer with Lambda runtime dependencies
+  RuntimeDependenciesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      LayerName: "personal-website-api-dependencies"
+      Description: Runtime dependencies for Lambdas
+      ContentUri: ./
+      CompatibleRuntimes:
+        - nodejs16.x
+      RetentionPolicy: Retain
+
+  ContactReplyEmailTemplate:
+    Type: "AWS::SES::Template"
+    Properties:
+      Template:
+        TemplateName: contact-reply-email-template
+        SubjectPart: Thanks for contacting me
+        HtmlPart: >
+          <body>
+            <p>Hi {{NAME}},</p>
+
+            <p>
+              Thank you for reaching out, I have received your email and will be in
+              touch with you shortly.
+            </p>
+
+            <p style="margin-bottom: 5px">Regards,</p>
+            <p style="margin-top: 0">Rohin Chopra</p>
+          </body>
+
+  ContactNotifyEmailTemplate:
+    Type: "AWS::SES::Template"
+    Properties:
+      Template:
+        TemplateName: contact-notify-email-template
+        SubjectPart: A contact form submission was made
+        HtmlPart: >
+          <body>
+            <p>Hi Rohin,</p>
+
+            <p>{{NAME}} submitted a contact form with the following details:</p>
+            <p>Email: {{EMAIL}}</p>
+            <p>Message: {{MESSAGE}}</p>
+
+            <p style="margin-bottom: 5px">Regards,</p>
+            <p style="margin-top: 0">Your bot</p>
+          </body>
+
+Outputs:
+  WebEndpoint:
+    Description: "API Gateway endpoint URL for Prod stage"
+    Value: !Sub "https://${PersonalWebsiteApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
