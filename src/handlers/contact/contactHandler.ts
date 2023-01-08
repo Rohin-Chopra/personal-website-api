@@ -4,9 +4,9 @@ import {
   ADMIN_EMAIL,
   NOTIFY_EMAIL_TEMPLATE_NAME,
   NO_REPLY_EMAIL,
+  REPLY_EMAIL_TEMPLATE_NAME,
 } from "../../lib/constants";
 import { logger } from "../../lib/logger";
-import { REPLY_EMAIL_TEMPLATE_NAME } from "../../lib/constants";
 import { contactSchema } from "./schema";
 
 interface ContactRequestBody {
@@ -76,7 +76,7 @@ class ContactHandler {
 
   private validate(body: ContactRequestBody): boolean {
     const validationResult = contactSchema.safeParse(body);
-    return !validationResult.success || body.email === ADMIN_EMAIL;
+    return validationResult.success && body.email !== ADMIN_EMAIL;
   }
 
   public async handler(
@@ -84,6 +84,7 @@ class ContactHandler {
   ): Promise<APIGatewayProxyResult> {
     const log = logger.child({ module: "contactHandler" });
     log.info("START");
+    log.info(event);
 
     const body: ContactRequestBody = JSON.parse(event.body!);
     if (!this.validate(body)) {
