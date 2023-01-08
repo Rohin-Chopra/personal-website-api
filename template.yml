@@ -33,6 +33,40 @@ Resources:
       Auth:
         ApiKeyRequired: true
 
+  ApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    DependsOn: [ApiUsagePlan]
+    Properties:
+      Name: !Join ["", [{ "Ref": "AWS::StackName" }, "-apikey"]]
+      Description: "CloudFormation API Key V1"
+      Enabled: true
+      StageKeys:
+        - RestApiId: !Ref PersonalWebsiteApi
+          StageName: Prod
+
+  ApiUsagePlan:
+    Type: "AWS::ApiGateway::UsagePlan"
+    DependsOn:
+      - PersonalWebsiteApi
+    Properties:
+      ApiStages:
+        - ApiId: !Ref PersonalWebsiteApi
+          Stage: Prod
+      Description: !Join [" ", [{ "Ref": "AWS::StackName" }, "usage plan"]]
+      Quota:
+        Limit: 1000
+        Period: MONTH
+      UsagePlanName: !Join ["", [{ "Ref": "AWS::StackName" }, "-usage-plan"]]
+
+  ApiUsagePlanKey:
+    Type: "AWS::ApiGateway::UsagePlanKey"
+    DependsOn:
+      - PersonalWebsiteApi
+    Properties:
+      KeyId: !Ref ApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref ApiUsagePlan
+
   HomeFunction:
     Type: AWS::Serverless::Function
     Metadata:
@@ -55,7 +89,7 @@ Resources:
     Metadata:
       BuildMethod: makefile
     Properties:
-      Handler: dist/handlers/contact/index.contactHandler
+      Handler: dist/handlers/contact/index.handler
       Description: A lambda function for handling contact queries on rohin's personal website.
       Environment:
         Variables:
