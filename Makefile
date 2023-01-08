@@ -1,8 +1,11 @@
 .PHONY: build-RuntimeDependenciesLayer build-lambda-common
 .PHONY: build-ContactFunction
 
+build-HomeFunction:
+	$(MAKE) HANDLER=src/handlers/home/index.ts build-lambda-common
+
 build-ContactFunction:
-	$(MAKE) HANDLER=src/handlers/index.ts build-lambda-common
+	$(MAKE) HANDLER=src/handlers/contact/index.ts build-lambda-common
 
 build-lambda-common:
 	npm install

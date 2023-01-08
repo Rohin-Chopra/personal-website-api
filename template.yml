@@ -13,20 +13,49 @@ Globals:
     MemorySize: 128
     Timeout: 100
 
+Parameters:
+  Domain:
+    Description: "Domain for API"
+    Type: String
+    Default: api.rohinchopra.com
+  HostedZoneID:
+    Description: "Hosted Zone ID"
+    Type: String
+    Default: Z044399818GL2L8S9XFZY
+
 Resources:
   PersonalWebsiteApi:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
+      EndpointConfiguration:
+        Type: REGIONAL
       Auth:
         ApiKeyRequired: true
+
+  HomeFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: dist/handlers/home/index.handler
+      Description: A lambda function for handling home route on rohin's personal website.
+      Events:
+        ApiKey:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PersonalWebsiteApi
+            Path: /
+            Method: GET
+            Auth:
+              ApiKeyRequired: false
 
   ContactFunction:
     Type: AWS::Serverless::Function
     Metadata:
       BuildMethod: makefile
     Properties:
-      Handler: dist/handlers/index.contactHandler
+      Handler: dist/handlers/contact/index.contactHandler
       Description: A lambda function for handling contact queries on rohin's personal website.
       Environment:
         Variables:
@@ -94,7 +123,47 @@ Resources:
             <p style="margin-top: 0">Your bot</p>
           </body>
 
+  ACMCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref Domain
+      DomainValidationOptions:
+        - DomainName: !Ref Domain
+          HostedZoneId: !Ref HostedZoneID
+      ValidationMethod: DNS
+
+  APIGatewayCustomDomain:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      DomainName: !Ref Domain
+      RegionalCertificateArn: !Ref ACMCertificate
+      EndpointConfiguration:
+        Types:
+          - "REGIONAL"
+      SecurityPolicy: TLS_1_2
+
+  Route53RecordSetGroup:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: !Ref Domain
+      Type: A
+      HostedZoneId: !Ref HostedZoneID
+      AliasTarget:
+        DNSName: !GetAtt APIGatewayCustomDomain.RegionalDomainName
+        HostedZoneId: !GetAtt APIGatewayCustomDomain.RegionalHostedZoneId
+        EvaluateTargetHealth: false
+
+  APIMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      DomainName: !Ref Domain
+      RestApiId: !Ref PersonalWebsiteApi
+      Stage: Prod
+
 Outputs:
+  CertificateArn:
+    Description: "ACM Certificate ARN"
+    Value: !Ref ACMCertificate
   WebEndpoint:
     Description: "API Gateway endpoint URL for Prod stage"
     Value: !Sub "https://${PersonalWebsiteApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"

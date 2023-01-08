@@ -4,9 +4,9 @@ import {
   ADMIN_EMAIL,
   NOTIFY_EMAIL_TEMPLATE_NAME,
   NO_REPLY_EMAIL,
-} from "../lib/constants";
-import { logger } from "../lib/logger";
-import { REPLY_EMAIL_TEMPLATE_NAME } from "./../lib/constants";
+} from "../../lib/constants";
+import { logger } from "../../lib/logger";
+import { REPLY_EMAIL_TEMPLATE_NAME } from "../../lib/constants";
 import { contactSchema } from "./schema";
 
 interface ContactRequestBody {
