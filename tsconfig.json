@@ -1,13 +1,15 @@
 {
-  "extends": "@tsconfig/recommended/tsconfig.json",
+  "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
-    "strict": true,
     "sourceMap": true,
-    "allowJs": true,
-    "checkJs": true,
-    "moduleResolution": "node",
-    "outDir": "./dist",
-    "rootDir": "./src"
+    "outDir": "lib"
   },
-  "include": ["src/**/*.ts", "src/**/*.js"]
+  "include": ["src/**/*.ts", "serverless.ts"],
+  "exclude": [
+    "node_modules/**/*",
+    ".serverless/**/*",
+    ".webpack/**/*",
+    "_warmup/**/*",
+    ".vscode/**/*"
+  ]
 }
