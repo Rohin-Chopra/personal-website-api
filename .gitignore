@@ -134,3 +134,5 @@ dist
 
 # esbuild directories
 .esbuild
+
+build
