@@ -61,3 +61,20 @@ resource "aws_api_gateway_usage_plan_key" "usage_plan_key_notification" {
   usage_plan_id = aws_api_gateway_usage_plan.personal_website_api_usage_plan.id
 }
 
+resource "aws_api_gateway_domain_name" "personal_website_api_domain" {
+  domain_name              = "api.rohinchopra.com"
+  regional_certificate_arn = aws_acm_certificate_validation.api_certificate_validation.certificate_arn
+  security_policy          = "TLS_1_2"
+
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
+}
+
+resource "aws_api_gateway_base_path_mapping" "personal_website_api_domain_connection" {
+  domain_name = aws_acm_certificate.certificate.domain_name
+  api_id      = aws_api_gateway_rest_api.personal_website_api.id
+  stage_name  = "dev"
+
+  depends_on = [aws_api_gateway_domain_name.personal_website_api_domain]
+}
