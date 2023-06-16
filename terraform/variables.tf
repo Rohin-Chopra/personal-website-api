@@ -3,9 +3,9 @@ variable "aws_region" {
   description = "Region where AWS resources are going to be deployed"
 }
 
-variable "contact_lambda_function_stage" {
+variable "api_stage" {
   type        = string
-  description = "Stage/env for the contact lambda function"
+  description = "Stage/env for the API"
 }
 
 variable "no_reply_email" {

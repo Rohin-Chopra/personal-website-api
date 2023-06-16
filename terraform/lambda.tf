@@ -24,6 +24,6 @@ resource "aws_lambda_function" "contact_lambda" {
   depends_on = [aws_cloudwatch_log_group.contact_lambda_log_group]
 
   tags = {
-    STAGE = var.contact_lambda_function_stage
+    STAGE = var.api_stage
   }
 }
