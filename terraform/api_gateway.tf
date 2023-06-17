@@ -37,7 +37,7 @@ resource "aws_api_gateway_integration" "api_lambda_integration" {
 
 resource "aws_api_gateway_deployment" "api_deployment" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  stage_name  = "dev"
+  stage_name  = var.api_stage
 
   depends_on = [aws_api_gateway_integration.api_lambda_integration]
 }
@@ -47,7 +47,7 @@ resource "aws_api_gateway_usage_plan" "api_usage_plan" {
 
   api_stages {
     api_id = aws_api_gateway_rest_api.api.id
-    stage  = "dev"
+    stage  = var.api_stage
   }
 }
 
@@ -74,7 +74,7 @@ resource "aws_api_gateway_domain_name" "api_domain_name" {
 resource "aws_api_gateway_base_path_mapping" "api_base_path_mapping" {
   domain_name = aws_acm_certificate.api_certificate.domain_name
   api_id      = aws_api_gateway_rest_api.api.id
-  stage_name  = "dev"
+  stage_name  = var.api_stage
 
   depends_on = [aws_api_gateway_domain_name.api_domain_name]
 }
