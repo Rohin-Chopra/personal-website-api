@@ -64,6 +64,9 @@ export const contactHandler = async (
     });
 
     return {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
       statusCode: 200,
       body: JSON.stringify({
         message: "Message sent",
