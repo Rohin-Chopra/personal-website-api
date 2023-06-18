@@ -109,13 +109,9 @@ resource "aws_api_gateway_usage_plan_key" "usage_plan_key_notification" {
 }
 
 resource "aws_api_gateway_domain_name" "api_domain_name" {
-  domain_name              = "api.rohinchopra.com"
-  regional_certificate_arn = aws_acm_certificate_validation.api_certificate_validation.certificate_arn
-  security_policy          = "TLS_1_2"
-
-  endpoint_configuration {
-    types = ["REGIONAL"]
-  }
+  domain_name     = "api.rohinchopra.com"
+  certificate_arn = aws_acm_certificate_validation.api_certificate_validation.certificate_arn
+  security_policy = "TLS_1_2"
 }
 
 resource "aws_api_gateway_base_path_mapping" "api_base_path_mapping" {
