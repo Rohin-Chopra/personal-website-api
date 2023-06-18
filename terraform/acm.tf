@@ -14,5 +14,4 @@ resource "aws_acm_certificate_validation" "api_certificate_validation" {
   validation_record_fqdns = [for record in aws_route53_record.domain_validation_dns_record : record.fqdn]
 
   provider = aws.n_virginia
-
 }
