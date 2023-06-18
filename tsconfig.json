@@ -2,9 +2,9 @@
   "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
     "sourceMap": true,
-    "outDir": "lib"
+    "outDir": "dist"
   },
-  "include": ["src/**/*.ts", "serverless.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": [
     "node_modules/**/*",
     ".serverless/**/*",

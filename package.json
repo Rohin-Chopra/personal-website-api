@@ -4,8 +4,7 @@
   "description": "",
   "main": "src/handler.ts",
   "scripts": {
-    "start": "sls offline",
-    "deploy": "sls deploy"
+    "build": "tsc"
   },
   "keywords": [],
   "author": "Rohin Chopra",
@@ -19,12 +18,9 @@
     "@types/aws-lambda": "^8.10.117",
     "@types/node": "^18.16.17",
     "aws-sdk": "^2.1397.0",
+    "esbuild": "^0.18.3",
     "eslint": "^8.42.0",
     "prettier": "^2.8.8",
-    "serverless": "^3.32.2",
-    "serverless-dotenv-plugin": "^6.0.0",
-    "serverless-offline": "^12.0.4",
-    "serverless-plugin-typescript": "^2.1.5",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.3"
   }
