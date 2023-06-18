@@ -65,7 +65,7 @@ export const contactHandler = async (
 
     return {
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Origin": "https://www.rohinchopra.com'",
       },
       statusCode: 200,
       body: JSON.stringify({
