@@ -60,8 +60,8 @@ resource "aws_api_gateway_integration_response" "options_api_integration_respons
   status_code = "200"
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'*'"
-    "method.response.header.Access-Control-Allow-Methods" = "'*'"
-    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'https://www.rohinchopra.com'"
   }
 }
 
